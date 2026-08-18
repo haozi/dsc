@@ -1,0 +1,21 @@
+{
+  "name": "tiny-harness",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev --filter=@tiny-harness/cli",
+    "lint": "prettier . --write",
+    "lint:check": "prettier . --check",
+    "ncu": "npm-check-updates -u --deep",
+    "start": "pnpm --filter @tiny-harness/cli start",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "prettier": "catalog:",
+    "prettier-plugin-lint-md": "catalog:",
+    "prettier-plugin-organize-imports": "catalog:",
+    "prettier-plugin-tailwindcss": "catalog:",
+    "turbo": "^2.10.10"
+  },
+  "packageManager": "pnpm@11.22.0"
+}

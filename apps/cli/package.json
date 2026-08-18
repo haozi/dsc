@@ -1,0 +1,26 @@
+{
+  "name": "@tiny-harness/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tiny": "./src/bin.tsx"
+  },
+  "scripts": {
+    "dev": "bun --watch src/bin.tsx",
+    "start": "bun src/bin.tsx",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tiny-harness/core": "workspace:*",
+    "ink": "catalog:",
+    "ink-text-input": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  }
+}
