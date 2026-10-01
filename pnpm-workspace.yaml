@@ -8,7 +8,12 @@ autoInstallPeers: true
 minimumReleaseAge: 0
 
 allowBuilds:
+  '@deepseek-ai/dsh-subprocess-local': true
+  '@google/genai': false
   esbuild: true
+  koffi: true
+  node-pty: true
+  protobufjs: false
 
 catalog:
   '@deepseek-ai/cordis': ~4.0.4
