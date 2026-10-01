@@ -1,26 +1,24 @@
 {
-  "name": "@tiny-harness/cli",
+  "name": "@dsc/cli",
   "version": "0.1.0",
+  "description": "dsc CLI: profile boot, plugin management, and the metacodes-style command surface over the dsh plugin stack",
   "private": true,
   "type": "module",
   "bin": {
-    "tiny": "./src/bin.tsx"
+    "dsc": "./src/bin.ts"
   },
   "scripts": {
-    "dev": "tsx watch src/bin.tsx",
-    "start": "tsx src/bin.tsx",
+    "dev": "tsx watch src/bin.ts",
+    "start": "tsx src/bin.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tiny-harness/core": "workspace:*",
-    "ink": "catalog:",
-    "ink-text-input": "catalog:",
-    "react": "catalog:"
+    "@dsc/core": "workspace:*",
+    "commander": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@types/react": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

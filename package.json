@@ -5,11 +5,11 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "turbo run dev --filter=@tiny-harness/cli",
+    "dev": "turbo run dev --filter=@dsc/cli",
     "lint": "prettier . --write",
     "lint:check": "prettier . --check",
     "ncu": "npm-check-updates -u --deep",
-    "start": "pnpm --filter @tiny-harness/cli start",
+    "start": "pnpm --filter @dsc/cli start",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck"
   },

@@ -1,5 +1,5 @@
-export * from './commands.ts'
-export * from './dispatch.ts'
-export * from './plugin.ts'
-export * from './runtime.ts'
-export * from './transcript.ts'
+/**
+ * @dsc/core — the boot core every dsc surface shares.
+ * @module @dsc/core
+ */
+export {}

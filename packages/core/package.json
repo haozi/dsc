@@ -1,6 +1,7 @@
 {
-  "name": "@tiny-harness/core",
+  "name": "@dsc/core",
   "version": "0.1.0",
+  "description": "dsc boot core: home paths, layered env, profile and bundle patch composition, and the cordis Loader boot sequence",
   "private": true,
   "type": "module",
   "exports": {
@@ -10,7 +11,18 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@deepseek-ai/cordis": "catalog:",
+    "@deepseek-ai/cordis-plugin-group": "catalog:",
+    "@deepseek-ai/cordis-plugin-hmr": "catalog:",
+    "@deepseek-ai/cordis-plugin-include": "catalog:",
+    "@deepseek-ai/cordis-plugin-loader": "catalog:",
+    "@deepseek-ai/cordis-plugin-timer": "catalog:",
+    "commander": "catalog:",
+    "js-yaml": "catalog:"
+  },
   "devDependencies": {
+    "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
