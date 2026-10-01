@@ -1,0 +1,58 @@
+# The @dsc/bundle-tui patch: the interactive terminal over dsh-base. It
+# mounts no Host, HTTP server, or browser plugin. The startup plugin injects
+# `cmdlineArgs`, parses `--model`, `--provider`, `--permission`, `--resume`
+# and `--no-theme`, then publishes `dscTui`; the terminal plugin creates one
+# Agent, answers approvals at the prompt, and renders the React + Ink REPL.
+
+- id: system-prompt
+  config:
+    persona: >-
+      You are a coding agent powered by the {{model}} model. Your working directory is {{cwd}}.
+
+# Module-reload HMR stays off; the launcher keeps the user patch layers live.
+- id: hmr
+  disabled: true
+
+# The permission mode named on the command line decides the file sandbox and
+# the approval policy the session starts from; /permissions switches later.
+- id: sandbox-policy
+  inject: [dscTui]
+  config:
+    mode: !!js ctx.dscTui.sandboxMode
+    workspaceRoot: !!js process.cwd()
+
+- id: approval
+  inject: [dscTui]
+  config:
+    policy: !!js ctx.dscTui.approvalPolicy
+
+# The preset table restated with dsc's extra `dont-ask` preset: a patch
+# replaces the row's whole config, and `dontAsk`/`auto` need a preset whose
+# sandbox and approval pair the harness base does not ship.
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      dont-ask:
+        sandbox: workspace-write
+        approval: never
+        name: dont-ask
+        description: Writes inside the workspace; anything else is rejected without asking.
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: !!js ctx.dscTui.preset
+  inject: [dscTui]
+
+- insert:
+    - id: dsc-tui-startup
+      name: '@dsc/bundle-tui/startup'
+
+    - id: dsc-tui
+      name: '@dsc/bundle-tui'
+      inject: [dscTui]

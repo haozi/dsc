@@ -19,6 +19,7 @@
     "@deepseek-ai/dsh-headless": "0.2.0-rc.2",
     "@deepseek-ai/dsh-web-app": "0.2.0-rc.2",
     "@dsc/bundle-headless": "workspace:*",
+    "@dsc/bundle-tui": "workspace:*",
     "@dsc/core": "workspace:*",
     "commander": "catalog:"
   },

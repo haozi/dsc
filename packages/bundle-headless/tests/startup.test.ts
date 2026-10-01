@@ -32,16 +32,15 @@ describe('resolvePermission', () => {
     expect(resolvePermission('default')).toEqual({
       sandboxMode: 'workspace-write',
       approvalPolicy: 'ask',
+      preset: 'workspace-write',
     })
     expect(resolvePermission('plan').sandboxMode).toBe('read-only')
     expect(resolvePermission('auto').approvalPolicy).toBe('never')
-    expect(resolvePermission('dontAsk')).toEqual({
-      sandboxMode: 'workspace-write',
-      approvalPolicy: 'never',
-    })
+    expect(resolvePermission('dontAsk').preset).toBe('dont-ask')
     expect(resolvePermission('bypassPermissions')).toEqual({
       sandboxMode: 'danger-full-access',
       approvalPolicy: 'never',
+      preset: 'danger-full-access',
     })
   })
 })
@@ -93,6 +92,7 @@ describe('startup plugin', () => {
       permission: 'auto',
       sandboxMode: 'workspace-write',
       approvalPolicy: 'never',
+      preset: 'dont-ask',
       dumpPrompt: false,
     })
   })

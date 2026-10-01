@@ -27,6 +27,29 @@
   config:
     policy: !!js ctx.dscHeadless.approvalPolicy
 
+# The preset table restated with dsc's extra `dont-ask` preset: a patch
+# replaces the row's whole config, and `dontAsk`/`auto` need a preset whose
+# sandbox and approval pair the harness base does not ship.
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      dont-ask:
+        sandbox: workspace-write
+        approval: never
+        name: dont-ask
+        description: Writes inside the workspace; anything else is rejected without asking.
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: !!js ctx.dscHeadless.preset
+  inject: [dscHeadless]
+
 - insert:
     - id: dsc-headless-startup
       name: '@dsc/bundle-headless/startup'

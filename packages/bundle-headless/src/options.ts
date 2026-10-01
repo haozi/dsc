@@ -3,7 +3,12 @@
  * @module @dsc/bundle-headless/options
  */
 
-import type { ApprovalPolicy, PermissionMode, SandboxMode } from '@dsc/core'
+import type {
+  ApprovalPolicy,
+  PermissionMode,
+  PermissionPreset,
+  SandboxMode,
+} from '@dsc/core'
 
 export { PERMISSION_MODES, resolvePermission } from '@dsc/core'
 export type { ApprovalPolicy, PermissionMode, SandboxMode } from '@dsc/core'
@@ -23,6 +28,7 @@ export interface HeadlessOptions {
   readonly permission: PermissionMode
   readonly sandboxMode: SandboxMode
   readonly approvalPolicy: ApprovalPolicy
+  readonly preset: PermissionPreset
   /** Print the assembled system prompt and exit instead of running. */
   readonly dumpPrompt: boolean
 }

@@ -1,0 +1,38 @@
+{
+  "name": "@dsc/bundle-tui",
+  "version": "0.1.0",
+  "description": "The dsc terminal bundle: a React + Ink REPL over the DeepSeek Harness base with metacodes slash verbs and every dsh-registered command",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./startup": "./src/startup.ts",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsc": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@deepseek-ai/cordis": "catalog:",
+    "@deepseek-ai/dsh-agent": "0.2.0-rc.2",
+    "@deepseek-ai/dsh-llm": "0.2.0-rc.2",
+    "@dsc/core": "workspace:*",
+    "commander": "catalog:",
+    "ink": "catalog:",
+    "ink-text-input": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
