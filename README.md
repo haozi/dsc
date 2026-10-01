@@ -18,11 +18,11 @@ profile**。
 ```bash
 pnpm install
 pnpm start                      # 互動終端（profile tui）
-pnpm start -- -p "run the tests" --json
-pnpm start -- login --api-key sk-...
+pnpm start -p "run the tests" --json
+pnpm start login --api-key sk-...
 ```
 
-> 下文以 `dsc` 代表 `pnpm start --`（或 `pnpm --filter @dsc/cli start --`）。
+> 下文以 `dsc` 代表 `pnpm start`（即 `pnpm --filter @dsc/cli start`，不要加 `--`）。
 
 ## 命令介面
 
