@@ -209,12 +209,10 @@ export function providerReport(
       '--check-providers requires the llm service; dsh-base provides it',
     )
   const selection = defaultModel.currentSelection()
-  const providers = llm
-    .listProviders()
-    .map((provider) => ({
-      ...provider,
-      selected: provider.id === selection.provider,
-    }))
+  const providers = llm.listProviders().map((provider) => ({
+    ...provider,
+    selected: provider.id === selection.provider,
+  }))
   return {
     default: selection,
     providers,

@@ -18,8 +18,17 @@ export const DEFAULT_PROFILE = 'tui'
 /** The profile behind the metacodes-style headless shortcut. */
 export const HEADLESS_PROFILE = 'headless'
 
-/** Inner tokens that, first, select the headless profile: `dsc -p "..."`, `dsc -`. */
-const HEADLESS_TRIGGERS = new Set(['-p', '--print', '-'])
+/**
+ * Inner tokens that, first, select the headless profile: `dsc -p "..."`,
+ * `dsc -`, and the boot-and-exit introspection flags.
+ */
+const HEADLESS_TRIGGERS = new Set([
+  '-p',
+  '--print',
+  '-',
+  '--dump-prompt',
+  '--check-providers',
+])
 
 /**
  * The profile an unnamed invocation boots: headless when the app arguments
@@ -59,6 +68,8 @@ Examples:
   dsc serve 7777                             serve the web host on port 7777 without a browser
   dsc -p "run the tests"                     answer one prompt headlessly and exit (profile headless)
   dsc -p "fix it" --json --stream-json       headless with metacodes NDJSON output
+  dsc --dump-prompt                          print the assembled system prompt and exit
+  dsc --check-providers                      list provider routes and the default model, then exit
   echo "run the tests" | dsc -               read the headless prompt from stdin
   dsc --profile tui --patch ./extra.yml      boot a profile with one extra overlay
   dsc --profile tui --resume <session>       arguments after the launcher flags reach the app
