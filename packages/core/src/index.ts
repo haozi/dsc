@@ -4,6 +4,7 @@
  */
 export * from './boot.ts'
 export * from './cmdline.ts'
+export * from './dump.ts'
 export * from './env.ts'
 export * from './home.ts'
 export * from './patches.ts'
