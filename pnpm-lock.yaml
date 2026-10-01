@@ -116,6 +116,9 @@ importers:
       '@dsc/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@vscode/ripgrep':
+        specifier: ^1.18.0
+        version: 1.18.0
       commander:
         specifier: 'catalog:'
         version: 15.0.0

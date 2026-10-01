@@ -21,6 +21,7 @@
     "@dsc/bundle-headless": "workspace:*",
     "@dsc/bundle-tui": "workspace:*",
     "@dsc/core": "workspace:*",
+    "@vscode/ripgrep": "^1.18.0",
     "commander": "catalog:"
   },
   "devDependencies": {

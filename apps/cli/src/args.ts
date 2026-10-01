@@ -33,6 +33,7 @@ export function implicitProfile(args: readonly string[]): string {
 
 export type Invocation =
   | { mode: 'version'; json: boolean }
+  | { mode: 'doctor'; json: boolean; strict: boolean }
   | { mode: 'profile'; profile: string; patches: string[]; args: string[] }
   | {
       mode: 'dump-config'
@@ -60,6 +61,7 @@ Examples:
   dsc --profile tui --resume <session>       arguments after the launcher flags reach the app
   dsc --profile web --help                   the web app's own flags and help
   dsc plugin --profile tui add <package>     install a plugin into the tui profile
+  dsc doctor [--json] [--strict]             check the installation, home, bundles and profiles
   dsc --profile tui --dump-config            print the composed profile tree
 `
 
@@ -235,6 +237,22 @@ export function buildProgram(
           ...withPortFlag(args),
         ]),
       )
+    })
+
+  program
+    .command('doctor')
+    .description(
+      'report where every runtime dependency resolves from and whether each profile can boot',
+    )
+    .option('--json', 'print the report as one JSON document')
+    .option('--strict', 'exit 1 on warnings as well as failures')
+    .action((options: { json?: boolean; strict?: boolean }) => {
+      rejectParentOptions('doctor')
+      onResolve({
+        mode: 'doctor',
+        json: options.json === true,
+        strict: options.strict === true,
+      })
     })
 
   program

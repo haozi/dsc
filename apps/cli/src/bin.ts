@@ -27,6 +27,16 @@ try {
       )
       break
     }
+    case 'doctor': {
+      const { diagnose, exitCodeOf, renderDoctorJson, renderDoctorText } =
+        await import('./doctor.ts')
+      const report = await diagnose()
+      process.stdout.write(
+        invocation.json ? renderDoctorJson(report) : renderDoctorText(report),
+      )
+      process.exitCode = exitCodeOf(report, invocation.strict)
+      break
+    }
     case 'profile': {
       const { runProfile } = await import('./profile-boot.ts')
       await runProfile({

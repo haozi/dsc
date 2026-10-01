@@ -177,6 +177,21 @@ describe('parseDscArgs', () => {
     expect(exits).toEqual([1, 1])
   })
 
+  test('doctor resolves its flags', () => {
+    expect(parseDscArgs(['doctor'], '1.0.0', exit)).toEqual({
+      mode: 'doctor',
+      json: false,
+      strict: false,
+    })
+    expect(
+      parseDscArgs(['doctor', '--json', '--strict'], '1.0.0', exit),
+    ).toEqual({
+      mode: 'doctor',
+      json: true,
+      strict: true,
+    })
+  })
+
   test('--version resolves the identity mode, with --json', () => {
     expect(parseDscArgs(['--version'], '1.0.0', exit)).toEqual({
       mode: 'version',
