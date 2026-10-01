@@ -155,6 +155,26 @@ describe('parseDscArgs', () => {
     expect(exits).toEqual([1, 1, 1])
   })
 
+  test('--dump-plugins is a boot-free mode exclusive with the config dumps', () => {
+    expect(
+      parseDscArgs(['--profile', 'tui', '--dump-plugins'], '1.0.0', exit),
+    ).toEqual({
+      mode: 'dump-plugins',
+      profile: 'tui',
+      patches: [],
+    })
+    expect(
+      parseDscArgs(['web', '--dump-plugins'], '1.0.0', exit),
+    ).toMatchObject({
+      mode: 'dump-plugins',
+      profile: 'web',
+    })
+    exits.length = 0
+    expect(() =>
+      parseDscArgs(['--dump-plugins', '--dump-config'], '1', exit),
+    ).toThrow('exit 1')
+  })
+
   test('plugin forwards pnpm arguments and requires a profile', () => {
     expect(
       parseDscArgs(

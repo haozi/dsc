@@ -4,6 +4,7 @@ import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import { renderProfileDump } from '../src/dump-config.ts'
+import { packageNameOf, pluginInventory } from '../src/dump-plugins.ts'
 import {
   composeProfile,
   homePatchPath,
@@ -92,6 +93,39 @@ describe('renderProfileDump', () => {
     const defaults = renderProfileDump('test', true, [])
     expect(defaults).toContain('# == @fake/bundle\n')
     expect(defaults).not.toContain('patched by')
+  })
+})
+
+describe('pluginInventory', () => {
+  test('resolves every row to its package and inserting layer', () => {
+    writeFileSync(
+      join(fake.profileDir, 'cordis.patch.yml'),
+      "- insert:\n    - id: extra\n      name: '@fake/app'\n      disabled: !!js process.platform === 'win32'\n",
+    )
+    const inventory = pluginInventory('test', [])
+    expect(inventory.layers).toMatchObject([
+      { package: '@fake/bundle', version: '0.1.0' },
+    ])
+    expect(inventory.entries).toMatchObject([
+      {
+        id: 'app',
+        name: '@fake/app',
+        disabled: false,
+        inserted_by: '@fake/bundle',
+        resolved: { package: '@fake/app', version: '0.1.0', source: 'profile' },
+      },
+      { id: 'session-telemetry-otel', disabled: true },
+      {
+        id: 'extra',
+        disabled: { expr: "process.platform === 'win32'" },
+        inserted_by: join(fake.profileDir, 'cordis.patch.yml'),
+      },
+    ])
+    expect(packageNameOf('@deepseek-ai/dsh-plugin-manager/tools')).toBe(
+      '@deepseek-ai/dsh-plugin-manager',
+    )
+    expect(packageNameOf('commander/esm')).toBe('commander')
+    expect(packageNameOf('./local.js')).toBeUndefined()
   })
 })
 

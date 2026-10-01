@@ -62,6 +62,11 @@ try {
       process.exit(runPlugin(invocation.profile, invocation.args))
       break
     }
+    case 'dump-plugins': {
+      const { runDumpPlugins } = await import('./dump-plugins.ts')
+      runDumpPlugins(invocation.profile, invocation.patches)
+      break
+    }
     case 'dump-config': {
       const { runDumpConfig } = await import('./dump-config.ts')
       runDumpConfig(

@@ -43,6 +43,7 @@ export type Invocation =
       defaultOnly: boolean
       patches: string[]
     }
+  | { mode: 'dump-plugins'; profile: string; patches: string[] }
   | { mode: 'plugin'; profile: string; args: string[] }
 
 const collect = (value: string, previous: string[] = []): string[] => [
@@ -66,6 +67,7 @@ Examples:
   dsc doctor [--json] [--strict]             check the installation, home, bundles and profiles
   dsc login --api-key <key>                  store the DeepSeek API key; dsc login status; dsc logout
   dsc --profile tui --dump-config            print the composed profile tree
+  dsc --profile tui --dump-plugins           print the plugin inventory as JSON
 `
 
 interface LauncherOptions {
@@ -73,6 +75,7 @@ interface LauncherOptions {
   patch?: string[]
   dumpConfig?: boolean
   dumpDefaultConfig?: boolean
+  dumpPlugins?: boolean
 }
 
 function resolveBoot(
@@ -83,16 +86,22 @@ function resolveBoot(
 ): Invocation {
   const patches = options.patch ?? []
   if (patches.includes('')) program.error('error: --patch needs a path')
-  if (options.dumpConfig !== true && options.dumpDefaultConfig !== true)
-    return { mode: 'profile', profile, patches, args }
-  if (options.dumpConfig === true && options.dumpDefaultConfig === true)
+  const dumps = [
+    options.dumpConfig,
+    options.dumpDefaultConfig,
+    options.dumpPlugins,
+  ].filter((flag) => flag === true).length
+  if (dumps === 0) return { mode: 'profile', profile, patches, args }
+  if (dumps > 1)
     program.error(
-      'error: --dump-config and --dump-default-config are mutually exclusive',
+      'error: --dump-config, --dump-default-config and --dump-plugins are mutually exclusive',
     )
   if (args.length > 0)
     program.error(
       `error: config dumps take no app arguments, got ${args.map((a) => JSON.stringify(a)).join(' ')}`,
     )
+  if (options.dumpPlugins === true)
+    return { mode: 'dump-plugins', profile, patches }
   const defaultOnly = options.dumpDefaultConfig === true
   if (defaultOnly && patches.length > 0)
     program.error(
@@ -174,6 +183,10 @@ export function buildProgram(
       '--dump-default-config',
       'print the profile tree without its user layer or --patch overlays and exit',
     )
+    .option(
+      '--dump-plugins',
+      'print the composed plugin inventory as JSON and exit',
+    )
     .action((args: string[], options: LauncherOptions) => {
       if (
         options.profile === undefined &&
@@ -191,10 +204,11 @@ export function buildProgram(
       parent.profile !== undefined ||
       parent.patch !== undefined ||
       parent.dumpConfig !== undefined ||
-      parent.dumpDefaultConfig !== undefined
+      parent.dumpDefaultConfig !== undefined ||
+      parent.dumpPlugins !== undefined
     )
       program.error(
-        `error: ${command} takes none of parent --profile, --patch, --dump-config, or --dump-default-config`,
+        `error: ${command} takes none of parent --profile, --patch, --dump-config, --dump-default-config, or --dump-plugins`,
       )
   }
 
@@ -214,6 +228,10 @@ export function buildProgram(
     .option(
       '--dump-default-config',
       "print the web profile's bundle layers and exit",
+    )
+    .option(
+      '--dump-plugins',
+      "print the web profile's plugin inventory as JSON and exit",
     )
     .action((args: string[], options: LauncherOptions) => {
       rejectParentOptions('web')
