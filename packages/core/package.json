@@ -19,7 +19,8 @@
     "@deepseek-ai/cordis-plugin-loader": "catalog:",
     "@deepseek-ai/cordis-plugin-timer": "catalog:",
     "commander": "catalog:",
-    "js-yaml": "catalog:"
+    "js-yaml": "catalog:",
+    "node-addon-require-builtin": "catalog:"
   },
   "devDependencies": {
     "@types/js-yaml": "catalog:",
