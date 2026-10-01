@@ -177,6 +177,17 @@ describe('parseDscArgs', () => {
     expect(exits).toEqual([1, 1])
   })
 
+  test('--version resolves the identity mode, with --json', () => {
+    expect(parseDscArgs(['--version'], '1.0.0', exit)).toEqual({
+      mode: 'version',
+      json: false,
+    })
+    expect(parseDscArgs(['-V', '--json'], '1.0.0', exit)).toEqual({
+      mode: 'version',
+      json: true,
+    })
+  })
+
   test('help and version are terminal', () => {
     exits.length = 0
     const out = process.stdout.write.bind(process.stdout)
@@ -187,12 +198,10 @@ describe('parseDscArgs', () => {
     }) as typeof process.stdout.write
     try {
       expect(() => parseDscArgs(['--help'], '1.0.0', exit)).toThrow('exit 0')
-      expect(() => parseDscArgs(['--version'], '1.0.0', exit)).toThrow('exit 0')
     } finally {
       process.stdout.write = out
     }
-    expect(exits).toEqual([0, 0])
+    expect(exits).toEqual([0])
     expect(captured.join('')).toContain('Usage: dsc')
-    expect(captured.join('')).toContain('1.0.0')
   })
 })

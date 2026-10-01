@@ -16,6 +16,17 @@ bridgeDshHome()
 
 try {
   switch (invocation.mode) {
+    case 'version': {
+      const { buildIdentity, renderVersionJson, renderVersionText } =
+        await import('./version.ts')
+      const identity = buildIdentity()
+      process.stdout.write(
+        invocation.json
+          ? renderVersionJson(identity)
+          : renderVersionText(identity),
+      )
+      break
+    }
     case 'profile': {
       const { runProfile } = await import('./profile-boot.ts')
       await runProfile({

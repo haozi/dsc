@@ -32,6 +32,7 @@ export function implicitProfile(args: readonly string[]): string {
 }
 
 export type Invocation =
+  | { mode: 'version'; json: boolean }
   | { mode: 'profile'; profile: string; patches: string[]; args: string[] }
   | {
       mode: 'dump-config'
@@ -104,6 +105,21 @@ export function withPortFlag(args: readonly string[]): string[] {
 }
 
 /**
+ * `dsc --version [--json]` / `dsc -V`: the build identity, before commander
+ * sees argv so `--json` selects the JSON document rather than reaching an app.
+ */
+export function versionInvocation(
+  argv: readonly string[],
+): Invocation | undefined {
+  const [first, ...rest] = argv
+  if (first !== '--version' && first !== '-V') return undefined
+  if (rest.length === 0) return { mode: 'version', json: false }
+  if (rest.length === 1 && rest[0] === '--json')
+    return { mode: 'version', json: true }
+  return undefined
+}
+
+/**
  * Rewrite the metacodes spellings onto launcher commands before parsing:
  * `--web [port]` is `web [--port <port>]` (the browser host).
  */
@@ -121,7 +137,11 @@ export function buildProgram(
   const program = new Command()
   program
     .name('dsc')
-    .version(version, '-V, --version', 'output the version number')
+    .version(
+      version,
+      '-V, --version',
+      'print the version and build identity (--json: one JSON document)',
+    )
     .description(
       'dsc: boot a profile — an ordered stack of plugin-bundle patch layers under your own overrides — on the DeepSeek Harness plugin stack.',
     )
@@ -256,6 +276,8 @@ export function parseDscArgs(
   version: string,
   exit: (code: number) => never = (code) => process.exit(code),
 ): Invocation {
+  const identity = versionInvocation(argv)
+  if (identity !== undefined) return identity
   let resolved: Invocation | undefined
   const program = buildProgram(version, (invocation) => {
     resolved = invocation
