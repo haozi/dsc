@@ -145,11 +145,13 @@ describe('boot', () => {
       debounceMs: 20,
     })
     try {
+      // Native watchers settle asynchronously; give the registration a moment.
+      await delay(150)
       writeFileSync(
         userLayer,
         '- id: consumer\n  config:\n    greeting: changed\n',
       )
-      for (let i = 0; i < 100; i += 1) {
+      for (let i = 0; i < 200; i += 1) {
         await delay(25)
         const consumer = (
           globalThis as { __dscConsumer?: { greeting: string } }
