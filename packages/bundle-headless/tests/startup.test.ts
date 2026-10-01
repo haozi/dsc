@@ -35,6 +35,10 @@ describe('resolvePermission', () => {
     })
     expect(resolvePermission('plan').sandboxMode).toBe('read-only')
     expect(resolvePermission('auto').approvalPolicy).toBe('never')
+    expect(resolvePermission('dontAsk')).toEqual({
+      sandboxMode: 'workspace-write',
+      approvalPolicy: 'never',
+    })
     expect(resolvePermission('bypassPermissions')).toEqual({
       sandboxMode: 'danger-full-access',
       approvalPolicy: 'never',
