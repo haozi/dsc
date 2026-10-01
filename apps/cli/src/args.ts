@@ -50,6 +50,8 @@ const HELP_EXAMPLES = `
 Examples:
   dsc                                        start the interactive terminal (profile tui)
   dsc --profile web                          boot the web profile (same as: dsc web)
+  dsc --web 7777                             serve the browser UI on port 7777 and open it
+  dsc serve 7777                             serve the web host on port 7777 without a browser
   dsc -p "run the tests"                     answer one prompt headlessly and exit (profile headless)
   dsc -p "fix it" --json --stream-json       headless with metacodes NDJSON output
   echo "run the tests" | dsc -               read the headless prompt from stdin
@@ -91,6 +93,24 @@ function resolveBoot(
       'error: --dump-default-config prints the bundle layers and takes no --patch',
     )
   return { mode: 'dump-config', profile, defaultOnly, patches }
+}
+
+/** `[7777, ...rest]` becomes `['--port', '7777', ...rest]`; other leading tokens pass through. */
+export function withPortFlag(args: readonly string[]): string[] {
+  const [first, ...rest] = args
+  return first !== undefined && /^\d+$/.test(first)
+    ? ['--port', first, ...rest]
+    : [...args]
+}
+
+/**
+ * Rewrite the metacodes spellings onto launcher commands before parsing:
+ * `--web [port]` is `web [--port <port>]` (the browser host).
+ */
+export function rewriteAliases(argv: readonly string[]): string[] {
+  const [first, ...rest] = argv
+  if (first === '--web') return ['web', ...withPortFlag(rest)]
+  return [...argv]
 }
 
 /** Build the launcher program; `resolved` receives the invocation. */
@@ -175,6 +195,28 @@ export function buildProgram(
       onResolve(resolveBoot(web, 'web', options, args))
     })
 
+  const serve = program
+    .command('serve')
+    .description(
+      'serve the web host without opening a browser (alias of: web --no-open [--port <port>]); a leading port number is accepted',
+    )
+  serve
+    .helpOption(false)
+    .allowUnknownOption()
+    .passThroughOptions()
+    .enablePositionalOptions()
+    .argument('[args...]', 'an optional port, then arguments for the web app')
+    .option('--patch <path>', 'extra patch-list overlay (repeatable)', collect)
+    .action((args: string[], options: LauncherOptions) => {
+      rejectParentOptions('serve')
+      onResolve(
+        resolveBoot(serve, 'web', options, [
+          '--no-open',
+          ...withPortFlag(args),
+        ]),
+      )
+    })
+
   program
     .command('plugin')
     .description(
@@ -219,7 +261,7 @@ export function parseDscArgs(
     resolved = invocation
   })
   try {
-    program.parse([...argv], { from: 'user' })
+    program.parse(rewriteAliases(argv), { from: 'user' })
   } catch (error) {
     return exit(error instanceof CommanderError ? error.exitCode : 1)
   }

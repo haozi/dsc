@@ -95,6 +95,32 @@ describe('parseDscArgs', () => {
     })
   })
 
+  test('--web and serve map onto the web profile', () => {
+    expect(parseDscArgs(['--web'], '1.0.0', exit)).toEqual({
+      mode: 'profile',
+      profile: 'web',
+      patches: [],
+      args: [],
+    })
+    expect(
+      parseDscArgs(['--web', '7777', '--host', '0.0.0.0'], '1.0.0', exit),
+    ).toMatchObject({
+      profile: 'web',
+      args: ['--port', '7777', '--host', '0.0.0.0'],
+    })
+    expect(parseDscArgs(['serve'], '1.0.0', exit)).toMatchObject({
+      profile: 'web',
+      args: ['--no-open'],
+    })
+    expect(
+      parseDscArgs(['serve', '--patch', 'x.yml', '8080'], '1.0.0', exit),
+    ).toMatchObject({
+      profile: 'web',
+      patches: ['x.yml'],
+      args: ['--no-open', '--port', '8080'],
+    })
+  })
+
   test('resolves config dumps and rejects their conflicts', () => {
     expect(
       parseDscArgs(
