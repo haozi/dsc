@@ -192,6 +192,33 @@ describe('parseDscArgs', () => {
     })
   })
 
+  test('login and logout resolve their flags', () => {
+    expect(parseDscArgs(['login', '--api-key', 'sk-1'], '1.0.0', exit)).toEqual(
+      {
+        mode: 'login',
+        apiKey: 'sk-1',
+        ref: 'DEEPSEEK_API_KEY',
+        status: false,
+      },
+    )
+    expect(parseDscArgs(['login', 'status'], '1.0.0', exit)).toMatchObject({
+      mode: 'login',
+      status: true,
+    })
+    expect(
+      parseDscArgs(['logout', '--ref', 'X_API_KEY'], '1.0.0', exit),
+    ).toEqual({
+      mode: 'logout',
+      ref: 'X_API_KEY',
+      all: false,
+    })
+    expect(parseDscArgs(['logout', '--all'], '1.0.0', exit)).toMatchObject({
+      all: true,
+    })
+    exits.length = 0
+    expect(() => parseDscArgs(['login', 'nope'], '1', exit)).toThrow('exit 1')
+  })
+
   test('--version resolves the identity mode, with --json', () => {
     expect(parseDscArgs(['--version'], '1.0.0', exit)).toEqual({
       mode: 'version',

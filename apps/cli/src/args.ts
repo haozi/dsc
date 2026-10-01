@@ -34,6 +34,8 @@ export function implicitProfile(args: readonly string[]): string {
 export type Invocation =
   | { mode: 'version'; json: boolean }
   | { mode: 'doctor'; json: boolean; strict: boolean }
+  | { mode: 'login'; apiKey?: string; ref: string; status: boolean }
+  | { mode: 'logout'; ref: string; all: boolean }
   | { mode: 'profile'; profile: string; patches: string[]; args: string[] }
   | {
       mode: 'dump-config'
@@ -62,6 +64,7 @@ Examples:
   dsc --profile web --help                   the web app's own flags and help
   dsc plugin --profile tui add <package>     install a plugin into the tui profile
   dsc doctor [--json] [--strict]             check the installation, home, bundles and profiles
+  dsc login --api-key <key>                  store the DeepSeek API key; dsc login status; dsc logout
   dsc --profile tui --dump-config            print the composed profile tree
 `
 
@@ -253,6 +256,56 @@ export function buildProgram(
         json: options.json === true,
         strict: options.strict === true,
       })
+    })
+
+  program
+    .command('login')
+    .description(
+      'store an API key in $DSC_HOME/.credentials.yaml (prompts when --api-key is omitted); `login status` reports sources',
+    )
+    .argument(
+      '[status]',
+      "'status' to report where each credential resolves from",
+    )
+    .option('--api-key <key>', 'the secret to store')
+    .option(
+      '--ref <name>',
+      'the credential reference to write',
+      'DEEPSEEK_API_KEY',
+    )
+    .action(
+      (
+        status: string | undefined,
+        options: { apiKey?: string; ref: string },
+      ) => {
+        rejectParentOptions('login')
+        if (status !== undefined && status !== 'status')
+          program.error(
+            `error: unknown login argument ${JSON.stringify(status)} (expected 'status')`,
+          )
+        onResolve({
+          mode: 'login',
+          ...(options.apiKey === undefined ? {} : { apiKey: options.apiKey }),
+          ref: options.ref,
+          status: status === 'status',
+        })
+      },
+    )
+
+  program
+    .command('logout')
+    .description(
+      'remove a stored credential (default DEEPSEEK_API_KEY) or, with --all, every stored credential',
+    )
+    .option(
+      '--ref <name>',
+      'the credential reference to remove',
+      'DEEPSEEK_API_KEY',
+    )
+    .option('--all', 'remove every stored credential')
+    .action((options: { ref: string; all?: boolean }) => {
+      rejectParentOptions('logout')
+      onResolve({ mode: 'logout', ref: options.ref, all: options.all === true })
     })
 
   program

@@ -37,6 +37,16 @@ try {
       process.exitCode = exitCodeOf(report, invocation.strict)
       break
     }
+    case 'login': {
+      const { runLogin } = await import('./auth.ts')
+      process.exitCode = await runLogin(invocation)
+      break
+    }
+    case 'logout': {
+      const { runLogout } = await import('./auth.ts')
+      process.exitCode = runLogout(invocation)
+      break
+    }
     case 'profile': {
       const { runProfile } = await import('./profile-boot.ts')
       await runProfile({
