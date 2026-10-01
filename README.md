@@ -1,6 +1,6 @@
 # Tiny Harness CLI
 
-一個由 pnpm workspace 與 Turborepo 管理、使用 Bun 執行、以 React + Ink 渲染的最小 CLI 框架。它保留了 DeepSeek Harness 最值得沿用的架構特徵，但刻意不帶入完整 agent、模型、持久化與 Web 層。
+一個由 pnpm workspace 與 Turborepo 管理、使用 Node 執行、以 React + Ink 渲染的最小 CLI 框架。它保留了 DeepSeek Harness 最值得沿用的架構特徵，但刻意不帶入完整 agent、模型、持久化與 Web 層。
 
 ## 執行
 
@@ -14,8 +14,8 @@ pnpm start
 單次執行模式適合 shell script：
 
 ```bash
-pnpm start -- run echo "hello world"
-pnpm start -- run help
+pnpm start run echo "hello world"
+pnpm start run help
 ```
 
 ## 架構

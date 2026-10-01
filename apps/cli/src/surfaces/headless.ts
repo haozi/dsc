@@ -6,8 +6,8 @@ export async function runHeadless(
 ): Promise<number> {
   const result = await dispatch(runtime, tokens)
   if (result.message !== undefined) {
-    const stream = result.ok ? Bun.stdout : Bun.stderr
-    await stream.write(`${result.message}\n`)
+    const stream = result.ok ? process.stdout : process.stderr
+    stream.write(`${result.message}\n`)
   }
   return result.ok ? 0 : 1
 }

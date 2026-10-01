@@ -1,11 +1,11 @@
-#!/usr/bin/env bun
+#!/usr/bin/env -S npx tsx
 
 import manifest from '../package.json' with { type: 'json' }
 import { help, parseArgs } from './args.ts'
 
 let invocation
 try {
-  invocation = parseArgs(Bun.argv.slice(2))
+  invocation = parseArgs(process.argv.slice(2))
 } catch (error) {
   console.error(
     `tiny: ${error instanceof Error ? error.message : String(error)}`,

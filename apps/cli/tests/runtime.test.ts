@@ -1,5 +1,5 @@
 import { dispatch, type Runtime } from '@tiny-harness/core'
-import { afterEach, describe, expect, test } from 'bun:test'
+import { afterEach, describe, expect, test } from 'vitest'
 import { boot } from '../src/boot.ts'
 
 let runtime: Runtime | undefined

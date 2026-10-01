@@ -7,9 +7,9 @@
     "tiny": "./src/bin.tsx"
   },
   "scripts": {
-    "dev": "bun --watch src/bin.tsx",
-    "start": "bun src/bin.tsx",
-    "test": "bun test",
+    "dev": "tsx watch src/bin.tsx",
+    "start": "tsx src/bin.tsx",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -19,8 +19,10 @@
     "react": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "typescript": "catalog:"
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -2,14 +2,33 @@ packages:
   - apps/*
   - packages/*
 
+nodeLinker: hoisted
+autoInstallPeers: true
+# Prerelease dsh packages ship often; do not quarantine fresh versions.
+minimumReleaseAge: 0
+
+allowBuilds:
+  esbuild: true
+
 catalog:
-  '@types/bun': ^1.2.20
-  '@types/react': ^19.1.10
-  ink: ^6.3.1
+  '@deepseek-ai/cordis': ~4.0.4
+  '@deepseek-ai/cordis-plugin-group': ~1.0.4
+  '@deepseek-ai/cordis-plugin-hmr': ~1.0.19
+  '@deepseek-ai/cordis-plugin-include': ~1.0.9
+  '@deepseek-ai/cordis-plugin-loader': ~1.0.5
+  '@deepseek-ai/cordis-plugin-timer': ~1.1.6
+  '@types/js-yaml': ^4.0.9
+  '@types/node': ^24.19.0
+  '@types/react': ^19.3.0
+  commander: ^15.0.0
+  ink: ^7.1.1
   ink-text-input: ^6.0.0
+  js-yaml: ^4.1.0
   prettier: ^3.9.6
   prettier-plugin-lint-md: ^1.0.1
   prettier-plugin-organize-imports: ^4.3.0
   prettier-plugin-tailwindcss: ^0.8.1
   react: ^19.1.1
-  typescript: ^5.9.2
+  tsx: ^4.23.0
+  typescript: ^5.9.3
+  vitest: ^5.0.3
