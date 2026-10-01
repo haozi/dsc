@@ -1,0 +1,36 @@
+# The @dsc/bundle-headless patch: metacodes-style one-shot mode directly over
+# dsh-base. It mounts no Host, HTTP server, or browser plugin. The startup
+# plugin injects `cmdlineArgs`, parses `-p/--print`, `--json`,
+# `--stream-json`, `--model`, `--permission` and `--session`, then publishes
+# `dscHeadless`; the runner drives one Agent and prints the result in the
+# metacodes NDJSON dialect.
+
+- id: system-prompt
+  config:
+    persona: >-
+      You are a coding agent powered by the {{model}} model. Your working directory is {{cwd}}.
+
+# Module-reload HMR stays off for a one-shot run.
+- id: hmr
+  disabled: true
+
+# The permission preset named on the command line decides the file sandbox
+# and the approval policy a fresh session starts from.
+- id: sandbox-policy
+  inject: [dscHeadless]
+  config:
+    mode: !!js ctx.dscHeadless.sandboxMode
+    workspaceRoot: !!js process.cwd()
+
+- id: approval
+  inject: [dscHeadless]
+  config:
+    policy: !!js ctx.dscHeadless.approvalPolicy
+
+- insert:
+    - id: dsc-headless-startup
+      name: '@dsc/bundle-headless/startup'
+
+    - id: dsc-headless-runner
+      name: '@dsc/bundle-headless'
+      inject: [dscHeadless]

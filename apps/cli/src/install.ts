@@ -28,7 +28,7 @@ export const BASE_BUNDLE = '@deepseek-ai/dsh-base'
 /** Shipped profile templates auto-initialized on first use, by name. */
 export const PROFILE_TEMPLATES: Readonly<Record<string, readonly string[]>> = {
   tui: [BASE_BUNDLE, '@dsc/bundle-tui'],
-  headless: [BASE_BUNDLE, '@deepseek-ai/dsh-headless'],
+  headless: [BASE_BUNDLE, '@dsc/bundle-headless'],
   web: [BASE_BUNDLE, '@deepseek-ai/dsh-web-app'],
 }
 

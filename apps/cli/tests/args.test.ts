@@ -25,6 +25,28 @@ describe('parseDscArgs', () => {
     )
   })
 
+  test('-p, --print and - select the headless profile', () => {
+    expect(parseDscArgs(['-p', 'hi', '--json'], '1.0.0', exit)).toEqual({
+      mode: 'profile',
+      profile: 'headless',
+      patches: [],
+      args: ['-p', 'hi', '--json'],
+    })
+    expect(parseDscArgs(['-'], '1.0.0', exit)).toMatchObject({
+      profile: 'headless',
+      args: ['-'],
+    })
+    expect(parseDscArgs(['--print', 'x'], '1.0.0', exit)).toMatchObject({
+      profile: 'headless',
+    })
+    expect(
+      parseDscArgs(['--profile', 'tui', '-p', 'x'], '1.0.0', exit),
+    ).toMatchObject({
+      profile: 'tui',
+      args: ['-p', 'x'],
+    })
+  })
+
   test('stops parsing launcher flags at the first inner token', () => {
     expect(
       parseDscArgs(

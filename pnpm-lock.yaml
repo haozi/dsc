@@ -95,6 +95,9 @@ importers:
       '@deepseek-ai/dsh-web-app':
         specifier: 0.2.0-rc.2
         version: 0.2.0-rc.2(c5fcdf652f38fa3edb61e30a93f32e73)
+      '@dsc/bundle-headless':
+        specifier: workspace:*
+        version: link:../../packages/bundle-headless
       '@dsc/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -108,6 +111,37 @@ importers:
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@24.19.0)(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  packages/bundle-headless:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: 'catalog:'
+        version: 4.0.4(@deepseek-ai/cordis-plugin-include@1.0.9)(@deepseek-ai/cordis-plugin-loader@1.0.5)
+      '@deepseek-ai/dsh-agent':
+        specifier: 0.2.0-rc.2
+        version: 0.2.0-rc.2(fee0e653b72a3883e0f0da2d9a46bb50)
+      '@deepseek-ai/dsh-llm':
+        specifier: 0.2.0-rc.2
+        version: 0.2.0-rc.2(@deepseek-ai/cordis@4.0.4)
+      '@deepseek-ai/dsh-session':
+        specifier: 0.2.0-rc.2
+        version: 0.2.0-rc.2(@deepseek-ai/cordis@4.0.4)(@deepseek-ai/dsh-scope@0.2.0-rc.2(@deepseek-ai/cordis@4.0.4)(@deepseek-ai/dsh-invariants@0.2.0-rc.2(@deepseek-ai/cordis@4.0.4)))
+      '@dsc/core':
+        specifier: workspace:*
+        version: link:../core
+      commander:
+        specifier: 'catalog:'
+        version: 15.0.0
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

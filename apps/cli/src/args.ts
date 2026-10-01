@@ -15,6 +15,22 @@ import { Command, CommanderError } from 'commander'
 /** The profile booted when none is named. */
 export const DEFAULT_PROFILE = 'tui'
 
+/** The profile behind the metacodes-style headless shortcut. */
+export const HEADLESS_PROFILE = 'headless'
+
+/** Inner tokens that, first, select the headless profile: `dsc -p "..."`, `dsc -`. */
+const HEADLESS_TRIGGERS = new Set(['-p', '--print', '-'])
+
+/**
+ * The profile an unnamed invocation boots: headless when the app arguments
+ * start with the metacodes print shortcut, otherwise the default.
+ */
+export function implicitProfile(args: readonly string[]): string {
+  return args[0] !== undefined && HEADLESS_TRIGGERS.has(args[0])
+    ? HEADLESS_PROFILE
+    : DEFAULT_PROFILE
+}
+
 export type Invocation =
   | { mode: 'profile'; profile: string; patches: string[]; args: string[] }
   | {
@@ -34,7 +50,9 @@ const HELP_EXAMPLES = `
 Examples:
   dsc                                        start the interactive terminal (profile tui)
   dsc --profile web                          boot the web profile (same as: dsc web)
-  dsc --profile headless -p "run the tests"  answer one task, print the result, and exit
+  dsc -p "run the tests"                     answer one prompt headlessly and exit (profile headless)
+  dsc -p "fix it" --json --stream-json       headless with metacodes NDJSON output
+  echo "run the tests" | dsc -               read the headless prompt from stdin
   dsc --profile tui --patch ./extra.yml      boot a profile with one extra overlay
   dsc --profile tui --resume <session>       arguments after the launcher flags reach the app
   dsc --profile web --help                   the web app's own flags and help
@@ -117,7 +135,7 @@ export function buildProgram(
         args.some((argument) => argument === '-h' || argument === '--help')
       )
         program.help()
-      const profile = options.profile ?? DEFAULT_PROFILE
+      const profile = options.profile ?? implicitProfile(args)
       if (profile === '') program.error('error: --profile needs a name')
       onResolve(resolveBoot(program, profile, options, args))
     })
