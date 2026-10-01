@@ -38,6 +38,7 @@ interface RawOptions {
   provider?: string
   permission: PermissionMode
   dumpPrompt?: boolean
+  checkProviders?: boolean
 }
 
 /** This app's command: flags, description, and help text. */
@@ -75,6 +76,10 @@ export function headlessCommand(): Command {
       'default' as PermissionMode,
     )
     .option('--dump-prompt', 'print the assembled system prompt and exit')
+    .option(
+      '--check-providers',
+      'list every provider route and the default model selection, then exit (no network)',
+    )
     .addHelpText(
       'after',
       `
@@ -103,7 +108,11 @@ export function resolveOptions(
     throw new Error(
       'error: give the prompt once, either as -p <prompt> or positionally',
     )
-  if (prompt.trim() === '' && raw.dumpPrompt !== true)
+  if (
+    prompt.trim() === '' &&
+    raw.dumpPrompt !== true &&
+    raw.checkProviders !== true
+  )
     throw new Error(
       'error: a prompt is required, for example: dsc -p "run the tests"',
     )
@@ -120,6 +129,7 @@ export function resolveOptions(
     permission: raw.permission,
     ...permission,
     dumpPrompt: raw.dumpPrompt === true,
+    checkProviders: raw.checkProviders === true,
   }
 }
 

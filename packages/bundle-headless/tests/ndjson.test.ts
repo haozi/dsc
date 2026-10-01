@@ -207,3 +207,32 @@ describe('RunProjection', () => {
     expect(projection.text).toBe('final')
   })
 })
+
+describe('providerReport', () => {
+  test('lists routes and flags a default without an adapter', async () => {
+    const { Context } = await import('@deepseek-ai/cordis')
+    const { providerReport, renderProviderReport } =
+      await import('../src/index.ts')
+    const ctx = new Context()
+    ctx.provide('llm', {
+      listProviders: () => [
+        { id: 'deepseek-official', name: 'DeepSeek' },
+        { id: 'other', name: 'Other' },
+      ],
+    })
+    const report = providerReport(ctx, {
+      currentSelection: () => ({
+        provider: 'deepseek-official',
+        model: 'deepseek-chat',
+      }),
+    })
+    expect(report.default_routed).toBe(true)
+    expect(report.providers.map((p) => p.selected)).toEqual([true, false])
+    expect(renderProviderReport(report)).toContain('* deepseek-official')
+    const missing = providerReport(ctx, {
+      currentSelection: () => ({ provider: 'nope', model: 'x' }),
+    })
+    expect(missing.default_routed).toBe(false)
+    expect(renderProviderReport(missing)).toContain('[no adapter registered')
+  })
+})

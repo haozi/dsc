@@ -94,6 +94,7 @@ describe('startup plugin', () => {
       approvalPolicy: 'never',
       preset: 'dont-ask',
       dumpPrompt: false,
+      checkProviders: false,
     })
   })
 

@@ -31,6 +31,8 @@ export interface HeadlessOptions {
   readonly preset: PermissionPreset
   /** Print the assembled system prompt and exit instead of running. */
   readonly dumpPrompt: boolean
+  /** List every provider route and the default selection, then exit (no network). */
+  readonly checkProviders: boolean
 }
 
 /** Service name published by `@dsc/bundle-headless/startup`. */

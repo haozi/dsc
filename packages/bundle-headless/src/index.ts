@@ -189,6 +189,53 @@ async function resolveCwd(ctx: Context): Promise<string> {
   return fs.processPath(await fs.resolve('.'))
 }
 
+/** Provider routes and the default selection, as `--check-providers` prints them. */
+export interface ProviderReport {
+  default: { provider: string; model: string; reasoningEffort?: string }
+  providers: { id: string; name: string; selected: boolean }[]
+  /** Whether the default provider has a registered adapter. */
+  default_routed: boolean
+}
+
+/** Build the report from the mounted llm registry. */
+export function providerReport(
+  ctx: Context,
+  defaultModel: DefaultModel,
+): ProviderReport {
+  const llm = ctx.get('llm') as
+    { listProviders(): { id: string; name: string }[] } | undefined
+  if (llm === undefined)
+    throw new Error(
+      '--check-providers requires the llm service; dsh-base provides it',
+    )
+  const selection = defaultModel.currentSelection()
+  const providers = llm
+    .listProviders()
+    .map((provider) => ({
+      ...provider,
+      selected: provider.id === selection.provider,
+    }))
+  return {
+    default: selection,
+    providers,
+    default_routed: providers.some((provider) => provider.selected),
+  }
+}
+
+/** Render the report as text. */
+export function renderProviderReport(report: ProviderReport): string {
+  const lines = [
+    `default: ${report.default.provider} / ${report.default.model}${report.default.reasoningEffort === undefined ? '' : ` (effort ${report.default.reasoningEffort})`}${report.default_routed ? '' : '  [no adapter registered for this provider]'}`,
+    'providers:',
+    ...report.providers.map(
+      (provider) =>
+        `  ${provider.selected ? '*' : ' '} ${provider.id.padEnd(24)} ${provider.name}`,
+    ),
+  ]
+  if (report.providers.length === 0) lines.push('  (none registered)')
+  return lines.join('\n') + '\n'
+}
+
 /** Print the assembled system prompt for the agent's scope and exit. */
 async function dumpPrompt(
   ctx: Context,
@@ -231,6 +278,16 @@ export async function run(
   )
     return
 
+  if (options.checkProviders) {
+    const report = providerReport(ctx, defaultModel)
+    io.stdout.write(
+      options.json
+        ? JSON.stringify(report) + '\n'
+        : renderProviderReport(report),
+    )
+    io.exit(report.default_routed ? 0 : 1)
+    return
+  }
   const prompt = options.prompt === '-' ? await io.readStdin() : options.prompt
   if (prompt.trim() === '' && !options.dumpPrompt)
     throw new Error('a prompt is required, for example: dsc -p "run the tests"')
