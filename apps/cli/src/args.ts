@@ -201,6 +201,7 @@ export function buildProgram(
     .action((args: string[], options: LauncherOptions) => {
       if (
         options.profile === undefined &&
+        implicitProfile(args) === DEFAULT_PROFILE &&
         args.some((argument) => argument === '-h' || argument === '--help')
       )
         program.help()
