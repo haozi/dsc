@@ -57,8 +57,8 @@ export type ManifestNamespace = (typeof MANIFEST_NAMESPACES)[number]
 
 /** Bundle declaration in a package manifest. */
 export interface BundleDeclaration {
-  /** Path of the patch file relative to the package root. */
-  patch: string
+  /** Patch file(s) relative to the package root, applied in order. */
+  patch: string | string[]
 }
 
 /** Profile declaration in a profile manifest. */
@@ -83,7 +83,9 @@ export interface BundleLayer {
   packageName: string
   packageDir: string
   version: string | undefined
-  patchPath: string
+  /** The bundle's patch files, in application order. */
+  patchPaths: string[]
+  /** Every patch file's entries, concatenated in order. */
   patches: PatchOptions[]
 }
 
@@ -213,10 +215,21 @@ export function bundleDeclarationOf(
 ): { namespace: ManifestNamespace; bundle: BundleDeclaration } | undefined {
   for (const namespace of MANIFEST_NAMESPACES) {
     const bundle = manifest[namespace]?.bundle
-    if (bundle !== undefined && typeof bundle.patch === 'string')
+    if (bundle === undefined) continue
+    const declared = bundle.patch as unknown
+    if (
+      typeof declared === 'string' ||
+      (Array.isArray(declared) &&
+        declared.every((file) => typeof file === 'string'))
+    )
       return { namespace, bundle }
   }
   return undefined
+}
+
+/** A bundle declaration's patch files, in application order. */
+export function bundlePatchFiles(bundle: BundleDeclaration): string[] {
+  return typeof bundle.patch === 'string' ? [bundle.patch] : [...bundle.patch]
 }
 
 /**
@@ -421,13 +434,17 @@ export function loadProfile(
       throw new Error(
         `${binName}: profile bundle ${JSON.stringify(packageName)} declares no dsc.bundle or dsh.bundle in its package.json`,
       )
-    const patchPath = join(packageDir, declared.bundle.patch)
+    const patchPaths = bundlePatchFiles(declared.bundle).map((file) =>
+      join(packageDir, file),
+    )
     return {
       packageName,
       packageDir,
       version: bundleManifest.version,
-      patchPath,
-      patches: loadOverlayPatches(binName, patchPath),
+      patchPaths,
+      patches: patchPaths.flatMap((patchPath) =>
+        loadOverlayPatches(binName, patchPath),
+      ),
     }
   })
   const patchPath = join(dir, PROFILE_PATCH_FILENAME)

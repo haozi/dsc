@@ -190,6 +190,35 @@ describe('loadProfile', () => {
     ).toThrow(/declares no dsc.bundle or dsh.bundle/)
   })
 
+  test('applies a multi-file bundle in declared order', () => {
+    const dir = join(install.modulesDir, '@fake/multi')
+    writeBundle(install.modulesDir, {
+      name: '@fake/multi',
+      patch:
+        "- insert:\n    - id: m\n      name: '@fake/m'\n      config:\n        v: 1\n",
+    })
+    writeFileSync(
+      join(dir, 'second.patch.yml'),
+      '- id: m\n  config:\n    v: 2\n',
+    )
+    const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'))
+    manifest.dsc = {
+      bundle: { patch: ['./cordis.patch.yml', './second.patch.yml'] },
+    }
+    writeFileSync(join(dir, 'package.json'), JSON.stringify(manifest))
+    const profileDir = resolveProfileDir('multi', install.home)
+    initProfile(profileDir, ['@fake/multi'])
+    const profile = loadProfile(
+      'dsc',
+      'multi',
+      install.installAnchor,
+      install.home,
+    )
+    expect(profile.layers[0]?.patchPaths).toHaveLength(2)
+    const rows = indexRows(composeEntries([profile.layers[0]!.patches]))
+    expect(rows.get('m')?.config).toEqual({ v: 2 })
+  })
+
   test('skips the user layer on request', () => {
     const dir = resolveProfileDir('tui', install.home)
     initProfile(dir, ['@fake/base'])
